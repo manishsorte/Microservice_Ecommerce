@@ -15,7 +15,6 @@ public class OrderDto {
 
     private int id;
     private String orderNumber;
-    private String skuCode;
     private String price;
     List<OrderLineItemsDto> orderLineItemsDtoList;
 }

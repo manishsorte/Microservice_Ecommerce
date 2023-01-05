@@ -1,5 +1,4 @@
-package com.ecommerce.Inventoryservice.payload;
-
+package com.ecommerce.Orderservice.client;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InventoryDto {
-
-    private int id;
+public class InventoryResponse {
     private String skuCode;
-    private String price;
-    private Integer quantity;
+    private boolean inStock;
 }

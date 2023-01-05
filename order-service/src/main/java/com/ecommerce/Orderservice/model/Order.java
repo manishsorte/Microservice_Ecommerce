@@ -20,7 +20,6 @@ public class Order {
     private int id;
 
     private String orderNumber;
-    private String skuCode;
     private String price;
 
     @OneToMany(cascade = CascadeType.ALL)

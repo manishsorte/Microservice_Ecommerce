@@ -1,6 +1,10 @@
 package com.ecommerce.Inventoryservice.service;
 
+import com.ecommerce.Inventoryservice.payload.InventoryResponse;
+
+import java.util.List;
+
 public interface InventoryService {
 
-    boolean inStock(String skuCode);
+    List<InventoryResponse> inStock(List<String> skuCode);
 }

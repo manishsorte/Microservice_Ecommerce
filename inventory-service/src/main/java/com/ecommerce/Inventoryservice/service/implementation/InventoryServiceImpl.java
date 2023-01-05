@@ -1,11 +1,14 @@
 package com.ecommerce.Inventoryservice.service.implementation;
 
+import com.ecommerce.Inventoryservice.model.Inventory;
+import com.ecommerce.Inventoryservice.payload.InventoryResponse;
 import com.ecommerce.Inventoryservice.repository.InventoryRepository;
 import com.ecommerce.Inventoryservice.service.InventoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -15,7 +18,16 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean inStock(String skuCode) {
-        return this.inventoryRepository.findByskuCode(skuCode).isPresent();
+    public List<InventoryResponse> inStock(List<String> skuCode) {
+        return this.inventoryRepository.findByskuCodeIn(skuCode)
+                .stream()
+                .map(this::getSkuCodeDetails).toList();
+    }
+
+    private InventoryResponse getSkuCodeDetails(Inventory inventory){
+        return InventoryResponse.builder()
+                .skuCode(inventory.getSkuCode())
+                .inStock(inventory.getQuantity() > 0)
+                .build();
     }
 }
