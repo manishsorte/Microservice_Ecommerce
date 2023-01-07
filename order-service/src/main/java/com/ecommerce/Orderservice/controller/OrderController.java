@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
@@ -22,9 +24,9 @@ public class OrderController {
     @CircuitBreaker(name = "inventoryBreaker", fallbackMethod = "fallbackMethod")
     @TimeLimiter(name="inventoryTimeOut")
     @Retry(name="inventoryRetry")
-    public ResponseEntity<OrderDto> placeOrder(@RequestBody OrderDto orderDto) {
+    public CompletableFuture<ResponseEntity<OrderDto>> placeOrder(@RequestBody OrderDto orderDto) {
         OrderDto placedOrder = this.orderService.placeOrder(orderDto);
-        return new ResponseEntity<>(placedOrder, HttpStatus.CREATED);
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(placedOrder, HttpStatus.CREATED));
     }
 
     @GetMapping("/{orderId}")
@@ -38,11 +40,11 @@ public class OrderController {
         this.orderService.deleteOrder(orderId);
         return new ResponseEntity<>(new ApiResponse("Order deleted successfully", true), HttpStatus.ACCEPTED);
     }
-    public ResponseEntity<OrderDto> fallbackMethod(OrderDto orderDto, Exception runtimeException) {
+    public CompletableFuture<ResponseEntity<OrderDto>> fallbackMethod(OrderDto orderDto, Exception runtimeException) {
         OrderDto failedOrderDto = new OrderDto();
         failedOrderDto.setId(0);
         failedOrderDto.setOrderNumber("Dummy Number");
         failedOrderDto.setPrice("Dummy Price");
-        return new ResponseEntity<>(failedOrderDto,HttpStatus.GATEWAY_TIMEOUT);
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(failedOrderDto,HttpStatus.GATEWAY_TIMEOUT));
     }
 }
