@@ -27,9 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     @Autowired
     private ModelMapper modelMapper;
-
-
-    private final WebClient.Builder webClient;
+    private final WebClient.Builder webClientBuilder;
 
     @Override
     public OrderDto getOrderById(Integer orderId) {
@@ -48,8 +46,8 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderLineItemsDto::getSkuCode)
                 .toList();
 
-        InventoryResponse[] inventoryResponse = webClient.build().get()
-                .uri("http://localhost:9093/api/inventory", uriBuilder -> uriBuilder.queryParam("skuCode", skuCodeList).build())
+        InventoryResponse[] inventoryResponse = webClientBuilder.build().get()
+                .uri("http://inventory-service/api/inventory", uriBuilder -> uriBuilder.queryParam("skuCode", skuCodeList).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
